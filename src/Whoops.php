@@ -122,7 +122,7 @@ class Whoops implements ServerMiddlewareInterface
                 break;
 
             default:
-                $whoops->pushHandler(new PrettyPageHandler());
+                $handler = new PrettyPageHandler();
                 break;
         }
 
