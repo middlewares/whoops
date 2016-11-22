@@ -3,9 +3,10 @@
 namespace Middlewares\Tests;
 
 use Middlewares\Whoops;
+use Middlewares\Utils\Dispatcher;
+use Middlewares\Utils\CallableMiddleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
-use mindplay\middleman\Dispatcher;
 
 class WhoopsTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,9 +14,9 @@ class WhoopsTest extends \PHPUnit_Framework_TestCase
     {
         $response = (new Dispatcher([
             new Whoops(),
-            function () {
+            new CallableMiddleware(function () {
                 throw new \Exception('Error Processing Request');
-            },
+            }),
         ]))->dispatch(new ServerRequest());
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
@@ -27,9 +28,9 @@ class WhoopsTest extends \PHPUnit_Framework_TestCase
     {
         $response = (new Dispatcher([
             new Whoops(),
-            function () {
+            new CallableMiddleware(function () {
                 return new Response();
-            },
+            }),
         ]))->dispatch(new ServerRequest());
 
         $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
