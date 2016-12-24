@@ -4,15 +4,15 @@ namespace Middlewares;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
-use Interop\Http\Middleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\XmlResponseHandler;
 
-class Whoops implements ServerMiddlewareInterface
+class Whoops implements MiddlewareInterface
 {
     /**
      * @var Run|null
