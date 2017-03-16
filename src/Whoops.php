@@ -78,9 +78,11 @@ class Whoops implements MiddlewareInterface
         } catch (\Throwable $exception) {
             $response = Utils\Factory::createResponse(500);
             $response->getBody()->write($whoops->$method($exception));
+            $response = self::updateResponseContentType($response, $whoops);
         } catch (\Exception $exception) {
             $response = Utils\Factory::createResponse(500);
             $response->getBody()->write($whoops->$method($exception));
+            $response = self::updateResponseContentType($response, $whoops);
         } finally {
             while (ob_get_level() >= $level) {
                 ob_end_clean();
@@ -160,5 +162,40 @@ class Whoops implements MiddlewareInterface
                 }
             }
         }
+    }
+
+    /**
+     * Returns the content-type for the whoops instance
+     *
+     * @param ResponseInterface $response
+     * @param Run $whoops
+     *
+     * @return ResponseInterface
+     */
+    private static function updateResponseContentType(ResponseInterface $response, Run $whoops)
+    {
+        if (1 !== count($whoops->getHandlers())) {
+            return $response;
+        }
+
+        $handler = current($whoops->getHandlers());
+
+        if ($handler instanceof PrettyPageHandler) {
+            return $response->withHeader('Content-Type', 'text/html');
+        }
+
+        if ($handler instanceof JsonResponseHandler) {
+            return $response->withHeader('Content-Type', 'application/json');
+        }
+
+        if ($handler instanceof XmlResponseHandler) {
+            return $response->withHeader('Content-Type', 'text/xml');
+        }
+
+        if ($handler instanceof PlainTextHandler) {
+            return $response->withHeader('Content-Type', 'text/plain');
+        }
+
+        return $response;
     }
 }
