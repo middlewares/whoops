@@ -4,6 +4,7 @@ namespace Middlewares\Tests;
 
 use Middlewares\Whoops;
 use Middlewares\Utils\Dispatcher;
+use Middlewares\Utils\Factory;
 
 class WhoopsTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,8 +17,8 @@ class WhoopsTest extends \PHPUnit_Framework_TestCase
             },
         ]);
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
         $this->assertNotFalse(strpos($response->getBody(), 'Error Processing Request'));
     }
 
@@ -27,7 +28,6 @@ class WhoopsTest extends \PHPUnit_Framework_TestCase
             new Whoops(),
         ]);
 
-        $this->assertInstanceOf('Psr\\Http\\Message\\ResponseInterface', $response);
         $this->assertEquals(200, $response->getStatusCode());
     }
 }
