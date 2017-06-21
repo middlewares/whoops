@@ -21,6 +21,11 @@ class Whoops implements MiddlewareInterface
     private $whoops;
 
     /**
+     * @var SystemFacade|null
+     */
+    private $system;
+
+    /**
      * @var bool Whether catch errors or not
      */
     private $catchErrors = true;
@@ -29,10 +34,12 @@ class Whoops implements MiddlewareInterface
      * Set the whoops instance.
      *
      * @param Run|null $whoops
+     * @param SystemFacade|null $systemFacade
      */
-    public function __construct(Run $whoops = null)
+    public function __construct(Run $whoops = null, SystemFacade $system = null)
     {
         $this->whoops = $whoops;
+        $this->system = $system;
     }
 
     /**
@@ -63,7 +70,7 @@ class Whoops implements MiddlewareInterface
         $level = ob_get_level();
 
         $method = Run::EXCEPTION_HANDLER;
-        $whoops = $this->whoops ?: self::getWhoopsInstance($request);
+        $whoops = $this->whoops ?: $this->getWhoopsInstance($request);
 
         $whoops->allowQuit(false);
         $whoops->writeToOutput(false);
@@ -72,6 +79,21 @@ class Whoops implements MiddlewareInterface
         //Catch errors means register whoops globally
         if ($this->catchErrors) {
             $whoops->register();
+
+            $shutdown = function () use ($whoops) {
+                $whoops->allowQuit(true);
+                $whoops->writeToOutput(true);
+                $whoops->sendHttpCode(true);
+
+                $method = Run::SHUTDOWN_HANDLER;
+                $whoops->$method();
+            };
+
+            if ($this->system) {
+                $this->system->registerShutdownFunction($shutdown);
+            } else {
+                register_shutdown_function($shutdown);
+            }
         }
 
         try {
@@ -104,22 +126,13 @@ class Whoops implements MiddlewareInterface
      *
      * @return Run
      */
-    private static function getWhoopsInstance(ServerRequestInterface $request)
+    private function getWhoopsInstance(ServerRequestInterface $request)
     {
-        $system = new SystemFacade();
-        $whoops = new Run($system);
-
-        //E_ERROR in PHP 5.x
-        if (!class_exists('Throwable')) {
-            $system->registerShutdownFunction(function () use ($whoops) {
-                $whoops->allowQuit(true);
-                $whoops->writeToOutput(true);
-                $whoops->sendHttpCode(true);
-
-                $method = Run::SHUTDOWN_HANDLER;
-                $whoops->$method();
-            });
+        if (!$this->system) {
+            $this->system = new SystemFacade();
         }
+
+        $whoops = new Run($this->system);
 
         switch (self::getPreferredFormat($request)) {
             case 'json':

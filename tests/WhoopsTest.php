@@ -22,18 +22,18 @@ class WhoopsTest extends \PHPUnit_Framework_TestCase
         $this->assertNotFalse(strpos($response->getBody(), 'Error Processing Request'));
     }
 
-    public function testFatalError()
+    public function testStandardError()
     {
         $response = Dispatcher::run([
             new Whoops(),
             function () {
-                new UnexistingClass();
+                $a = $b; //undefined variable
             },
         ]);
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
-        $this->assertNotFalse(strpos($response->getBody(), "Class 'Middlewares\\Tests\\UnexistingClass' not found"));
+        $this->assertNotFalse(strpos($response->getBody(), 'Undefined variable: b'));
     }
 
     public function testNotError()

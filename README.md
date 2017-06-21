@@ -35,9 +35,9 @@ $response = $dispatcher->dispatch(new ServerRequest());
 
 ## Options
 
-#### `__construct(Whoops\Run $whoops = null)`
+#### `__construct(Whoops\Run $whoops = null, Whoops\Util\SystemFacade $system = null)`
 
-Allows to provide a custom `Whoops\Run` instance. If it's not defined, creates an instance automatically.
+Allows to provide a custom `Whoops\Run` instance. If it's not defined, creates an instance automatically. You can provide also the `SystemFacade` used by the `Run` instance, in order to implement a special behaviour with fatal errors.
 
 #### `catchErrors(true)`
 
