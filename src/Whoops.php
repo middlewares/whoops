@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Whoops\Run;
+use Whoops\Util\SystemFacade;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\JsonResponseHandler;
@@ -105,7 +106,20 @@ class Whoops implements MiddlewareInterface
      */
     private static function getWhoopsInstance(ServerRequestInterface $request)
     {
-        $whoops = new Run();
+        $system = new SystemFacade();
+        $whoops = new Run($system);
+
+        //E_ERROR in PHP 5.x
+        if (!class_exists('Throwable')) {
+            $system->registerShutdownFunction(function () use ($whoops) {
+                $whoops->allowQuit(true);
+                $whoops->writeToOutput(true);
+                $whoops->sendHttpCode(true);
+
+                $method = Run::SHUTDOWN_HANDLER;
+                $whoops->$method();
+            });
+        }
 
         switch (self::getPreferredFormat($request)) {
             case 'json':
