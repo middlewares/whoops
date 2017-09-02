@@ -2,10 +2,9 @@
 
 namespace Middlewares\Tests;
 
-use PHPUnit\Framework\TestCase;
-use Middlewares\Whoops;
 use Middlewares\Utils\Dispatcher;
-use Middlewares\Utils\Factory;
+use Middlewares\Whoops;
+use PHPUnit\Framework\TestCase;
 
 class WhoopsTest extends TestCase
 {

@@ -2,16 +2,16 @@
 
 namespace Middlewares;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\PlainTextHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
 use Whoops\Util\SystemFacade;
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Handler\PlainTextHandler;
-use Whoops\Handler\JsonResponseHandler;
-use Whoops\Handler\XmlResponseHandler;
 
 class Whoops implements MiddlewareInterface
 {
@@ -33,7 +33,7 @@ class Whoops implements MiddlewareInterface
     /**
      * Set the whoops instance.
      *
-     * @param Run|null $whoops
+     * @param Run|null          $whoops
      * @param SystemFacade|null $systemFacade
      */
     public function __construct(Run $whoops = null, SystemFacade $system = null)
@@ -139,17 +139,14 @@ class Whoops implements MiddlewareInterface
                 $handler = new JsonResponseHandler();
                 $handler->addTraceToOutput(true);
                 break;
-
             case 'xml':
                 $handler = new XmlResponseHandler();
                 $handler->addTraceToOutput(true);
                 break;
-
             case 'plain':
                 $handler = new PlainTextHandler();
                 $handler->addTraceToOutput(true);
                 break;
-
             default:
                 $handler = new PrettyPageHandler();
                 break;
@@ -195,7 +192,7 @@ class Whoops implements MiddlewareInterface
      * Returns the content-type for the whoops instance
      *
      * @param ResponseInterface $response
-     * @param Run $whoops
+     * @param Run               $whoops
      *
      * @return ResponseInterface
      */
