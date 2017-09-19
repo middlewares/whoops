@@ -2,8 +2,8 @@
 
 namespace Middlewares;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Whoops\Handler\JsonResponseHandler;
@@ -59,12 +59,12 @@ class Whoops implements MiddlewareInterface
     /**
      * Process a server request and return a response.
      *
-     * @param ServerRequestInterface $request
-     * @param DelegateInterface      $delegate
+     * @param ServerRequestInterface  $request
+     * @param RequestHandlerInterface $handler
      *
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
     {
         ob_start();
         $level = ob_get_level();
@@ -97,7 +97,7 @@ class Whoops implements MiddlewareInterface
         }
 
         try {
-            $response = $delegate->process($request);
+            $response = $handler->handle($request);
         } catch (\Throwable $exception) {
             $response = Utils\Factory::createResponse(500);
             $response->getBody()->write($whoops->$method($exception));
