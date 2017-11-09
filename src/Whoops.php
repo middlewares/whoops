@@ -34,7 +34,7 @@ class Whoops implements MiddlewareInterface
      * Set the whoops instance.
      *
      * @param Run|null          $whoops
-     * @param SystemFacade|null $systemFacade
+     * @param SystemFacade|null $system
      */
     public function __construct(Run $whoops = null, SystemFacade $system = null)
     {
