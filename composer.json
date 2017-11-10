@@ -18,7 +18,7 @@
     },
     "require": {
         "php": "^5.6 || ^7.0",
-        "http-interop/http-server-middleware": "^1.0",
+        "http-interop/http-middleware": "^0.5",
         "filp/whoops": "^2.1",
         "middlewares/utils": "~0.12"
     },
