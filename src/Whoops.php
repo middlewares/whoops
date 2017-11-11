@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace Middlewares;
 
@@ -32,9 +33,6 @@ class Whoops implements MiddlewareInterface
 
     /**
      * Set the whoops instance.
-     *
-     * @param Run|null          $whoops
-     * @param SystemFacade|null $system
      */
     public function __construct(Run $whoops = null, SystemFacade $system = null)
     {
@@ -44,12 +42,8 @@ class Whoops implements MiddlewareInterface
 
     /**
      * Whether catch errors or not.
-     *
-     * @param bool $catchErrors
-     *
-     * @return self
      */
-    public function catchErrors($catchErrors = true)
+    public function catchErrors(bool $catchErrors = true): self
     {
         $this->catchErrors = (bool) $catchErrors;
 
@@ -58,13 +52,8 @@ class Whoops implements MiddlewareInterface
 
     /**
      * Process a server request and return a response.
-     *
-     * @param ServerRequestInterface  $request
-     * @param RequestHandlerInterface $handler
-     *
-     * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         ob_start();
         $level = ob_get_level();
@@ -102,10 +91,6 @@ class Whoops implements MiddlewareInterface
             $response = Utils\Factory::createResponse(500);
             $response->getBody()->write($whoops->$method($exception));
             $response = self::updateResponseContentType($response, $whoops);
-        } catch (\Exception $exception) {
-            $response = Utils\Factory::createResponse(500);
-            $response->getBody()->write($whoops->$method($exception));
-            $response = self::updateResponseContentType($response, $whoops);
         } finally {
             while (ob_get_level() >= $level) {
                 ob_end_clean();
@@ -121,12 +106,8 @@ class Whoops implements MiddlewareInterface
 
     /**
      * Returns the whoops instance or create one.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return Run
      */
-    private function getWhoopsInstance(ServerRequestInterface $request)
+    private function getWhoopsInstance(ServerRequestInterface $request): Run
     {
         if (!$this->system) {
             $this->system = new SystemFacade();
@@ -160,11 +141,9 @@ class Whoops implements MiddlewareInterface
     /**
      * Returns the preferred format used by whoops.
      *
-     * @param ServerRequestInterface $request
-     *
      * @return string|null
      */
-    private static function getPreferredFormat($request)
+    private static function getPreferredFormat(ServerRequestInterface $request)
     {
         if (php_sapi_name() === 'cli') {
             return 'plain';
@@ -190,13 +169,8 @@ class Whoops implements MiddlewareInterface
 
     /**
      * Returns the content-type for the whoops instance
-     *
-     * @param ResponseInterface $response
-     * @param Run               $whoops
-     *
-     * @return ResponseInterface
      */
-    private static function updateResponseContentType(ResponseInterface $response, Run $whoops)
+    private static function updateResponseContentType(ResponseInterface $response, Run $whoops): ResponseInterface
     {
         if (1 !== count($whoops->getHandlers())) {
             return $response;
