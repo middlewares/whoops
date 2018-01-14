@@ -20,7 +20,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
-        $this->assertNotFalse(strpos($response->getBody(), 'Error Processing Request'));
+        $this->assertNotFalse(strpos((string) $response->getBody(), 'Error Processing Request'));
     }
 
     public function testStandardError()
@@ -34,7 +34,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
-        $this->assertNotFalse(strpos($response->getBody(), 'Undefined variable: b'));
+        $this->assertNotFalse(strpos((string) $response->getBody(), 'Undefined variable: b'));
     }
 
     public function testNotError()
