@@ -6,11 +6,7 @@ namespace Middlewares\Tests;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Whoops;
 use PHPUnit\Framework\TestCase;
-use Whoops\Handler\CallbackHandler;
-use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\XmlResponseHandler;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\ServerRequest;
 use function uopz_set_return;
 use function uopz_unset_return;
@@ -91,5 +87,21 @@ class HandlerTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
+    }
+
+
+    public function testCustom()
+    {
+        $request = (new ServerRequest)->withHeader('Accept', 'text/html');
+
+        $response = Dispatcher::run([
+            (new Whoops)->defaultHandler(new XmlResponseHandler),
+            function () {
+                throw new \Exception('Error Processing Request');
+            },
+        ], $request);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals('text/xml', $response->getHeaderLine('Content-Type'));
     }
 }
