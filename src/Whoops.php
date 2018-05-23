@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -25,6 +26,11 @@ class Whoops implements MiddlewareInterface
      * @var SystemFacade|null
      */
     private $system;
+
+    /**
+     * @var HandlerInterface|null
+     */
+    private $handler;
 
     /**
      * @var bool Whether catch errors or not
@@ -46,6 +52,20 @@ class Whoops implements MiddlewareInterface
     public function catchErrors(bool $catchErrors = true): self
     {
         $this->catchErrors = (bool) $catchErrors;
+
+        return $this;
+    }
+
+    /**
+     * Set the default handler to use (instead of the standard PrettyPrintHandler).
+     *
+     * @param HandlerInterface $handler The default handler to use
+     *
+     * @return $this
+     */
+    public function defaultHandler(HandlerInterface $handler)
+    {
+        $this->handler = $handler;
 
         return $this;
     }
@@ -129,7 +149,7 @@ class Whoops implements MiddlewareInterface
                 $handler->addTraceToOutput(true);
                 break;
             default:
-                $handler = new PrettyPageHandler();
+                $handler = $this->handler ?: new PrettyPageHandler();
                 break;
         }
 
