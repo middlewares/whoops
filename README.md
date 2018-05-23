@@ -43,6 +43,10 @@ Allows to provide a custom `Whoops\Run` instance. If it's not defined, creates a
 
 To catch not only throwable exceptions, but also php errors. This makes whoops to be registered temporary in order to capture the errors using `set_error_handler`. It's enabled by default so, to disable it you have to use `->catchErrors(false)`;
 
+#### `handlerContainer(Psr\Container\ContainerInterface $container)`
+
+To define a custom PSR-11 container used to create the intance of `Whoops\Handler\HandlerInterface` based in the `Accept` header in the request.
+
 ---
 
 Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes and [CONTRIBUTING](CONTRIBUTING.md) for contributing details.

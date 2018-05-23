@@ -3,11 +3,11 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Whoops\Handler\HandlerInterface;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -28,14 +28,14 @@ class Whoops implements MiddlewareInterface
     private $system;
 
     /**
-     * @var HandlerInterface|null
-     */
-    private $handler;
-
-    /**
      * @var bool Whether catch errors or not
      */
     private $catchErrors = true;
+
+    /**
+     * @var ContainerInterface|null
+     */
+    private $handlerContainer;
 
     /**
      * Set the whoops instance.
@@ -57,15 +57,11 @@ class Whoops implements MiddlewareInterface
     }
 
     /**
-     * Set the default handler to use (instead of the standard PrettyPrintHandler).
-     *
-     * @param HandlerInterface $handler The default handler to use
-     *
-     * @return $this
+     * Set the PSR-11 container to create the error handler using the Accept header
      */
-    public function defaultHandler(HandlerInterface $handler)
+    public function handlerContainer(ContainerInterface $handlerContainer): self
     {
-        $this->handler = $handler;
+        $this->handlerContainer = $handlerContainer;
 
         return $this;
     }
@@ -134,62 +130,11 @@ class Whoops implements MiddlewareInterface
         }
 
         $whoops = new Run($this->system);
-
-        switch (self::getPreferredFormat($request)) {
-            case 'json':
-                $handler = new JsonResponseHandler();
-                $handler->addTraceToOutput(true);
-                break;
-            case 'xml':
-                $handler = new XmlResponseHandler();
-                $handler->addTraceToOutput(true);
-                break;
-            case 'plain':
-                $handler = new PlainTextHandler();
-                $handler->addTraceToOutput(true);
-                break;
-            default:
-                $handler = $this->handler ?: new PrettyPageHandler();
-                break;
-        }
-
+        $container = $this->handlerContainer ?: new WhoopsHandlerContainer();
+        $handler = $container->get($request->getHeaderLine('Accept'));
         $whoops->pushHandler($handler);
 
         return $whoops;
-    }
-
-    protected static function isCli(): bool
-    {
-        return php_sapi_name() === 'cli';
-    }
-
-    /**
-     * Returns the preferred format used by whoops.
-     *
-     * @return string|null
-     */
-    private static function getPreferredFormat(ServerRequestInterface $request)
-    {
-        if (static::isCli()) {
-            return 'plain';
-        }
-
-        $formats = [
-            'json' => ['application/json'],
-            'html' => ['text/html'],
-            'xml' => ['text/xml'],
-            'plain' => ['text/plain', 'text/css', 'text/javascript'],
-        ];
-
-        $accept = $request->getHeaderLine('Accept');
-
-        foreach ($formats as $format => $mimes) {
-            foreach ($mimes as $mime) {
-                if (stripos($accept, $mime) !== false) {
-                    return $format;
-                }
-            }
-        }
     }
 
     /**
