@@ -6,21 +6,26 @@ namespace Middlewares\Tests;
 use Eloquent\Phony\Phpunit\Phony;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Whoops;
+use Middlewares\WhoopsHandlerContainer;
 use PHPUnit\Framework\TestCase;
-use Whoops\Handler\XmlResponseHandler;
 use Zend\Diactoros\ServerRequest;
 
 class HandlerTest extends TestCase
 {
+    private static function getContainer()
+    {
+        $container = Phony::partialMock(WhoopsHandlerContainer::class)->get();
+        Phony::onStatic($container)->isCli->returns(false);
+
+        return $container;
+    }
+
     public function testJson()
     {
         $request = (new ServerRequest())->withHeader('Accept', 'application/json');
 
-        $whoops = Phony::partialMock(Whoops::class)->get();
-        Phony::onStatic($whoops)->isCli->returns(false);
-
         $response = Dispatcher::run([
-            $whoops,
+            (new Whoops())->handlerContainer(self::getContainer()),
             function () {
                 throw new \Exception('Error Processing Request');
             },
@@ -34,11 +39,8 @@ class HandlerTest extends TestCase
     {
         $request = (new ServerRequest())->withHeader('Accept', 'text/xml');
 
-        $whoops = Phony::partialMock(Whoops::class)->get();
-        Phony::onStatic($whoops)->isCli->returns(false);
-
         $response = Dispatcher::run([
-            $whoops,
+            (new Whoops())->handlerContainer(self::getContainer()),
             function () {
                 throw new \Exception('Error Processing Request');
             },
@@ -52,11 +54,8 @@ class HandlerTest extends TestCase
     {
         $request = (new ServerRequest())->withHeader('Accept', 'text/plain');
 
-        $whoops = Phony::partialMock(Whoops::class)->get();
-        Phony::onStatic($whoops)->isCli->returns(false);
-
         $response = Dispatcher::run([
-            $whoops,
+            (new Whoops())->handlerContainer(self::getContainer()),
             function () {
                 throw new \Exception('Error Processing Request');
             },
@@ -66,15 +65,12 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
     }
 
-    public function testDefault()
+    public function testHtml()
     {
         $request = (new ServerRequest())->withHeader('Accept', 'text/html');
 
-        $whoops = Phony::partialMock(Whoops::class)->get();
-        Phony::onStatic($whoops)->isCli->returns(false);
-
         $response = Dispatcher::run([
-            $whoops,
+            (new Whoops())->handlerContainer(self::getContainer()),
             function () {
                 throw new \Exception('Error Processing Request');
             },
@@ -84,21 +80,33 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
     }
 
-    public function testCustom()
+    public function testDefault()
     {
-        $request = (new ServerRequest())->withHeader('Accept', 'text/html');
-
-        $whoops = Phony::partialMock(Whoops::class)->get();
-        Phony::onStatic($whoops)->isCli->returns(false);
+        $request = (new ServerRequest())->withHeader('Accept', 'foo/bar');
 
         $response = Dispatcher::run([
-            $whoops->defaultHandler(new XmlResponseHandler()),
+            (new Whoops())->handlerContainer(self::getContainer()),
             function () {
                 throw new \Exception('Error Processing Request');
             },
         ], $request);
 
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals('text/xml', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
+    }
+
+    public function testEmptyAccept()
+    {
+        $request = new ServerRequest();
+
+        $response = Dispatcher::run([
+            (new Whoops())->handlerContainer(self::getContainer()),
+            function () {
+                throw new \Exception('Error Processing Request');
+            },
+        ], $request);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
     }
 }
