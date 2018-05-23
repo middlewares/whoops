@@ -3,35 +3,24 @@ declare(strict_types = 1);
 
 namespace Middlewares\Tests;
 
+use Eloquent\Phony\Phpunit\Phony;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Whoops;
 use PHPUnit\Framework\TestCase;
 use Whoops\Handler\XmlResponseHandler;
 use Zend\Diactoros\ServerRequest;
-use function uopz_set_return;
-use function uopz_unset_return;
 
 class HandlerTest extends TestCase
 {
-
-    public function setUp()
-    {
-        uopz_set_return("php_sapi_name", "phpunit");
-    }
-
-
-    public function tearDown()
-    {
-        uopz_unset_return("php_sapi_name");
-    }
-
-
     public function testJson()
     {
         $request = (new ServerRequest)->withHeader('Accept', 'application/json');
 
+        $whoops = Phony::partialMock(Whoops::class)->get();
+        Phony::onStatic($whoops)->isCli->returns(false);
+
         $response = Dispatcher::run([
-            new Whoops(),
+            $whoops,
             function () {
                 throw new \Exception('Error Processing Request');
             },
@@ -46,8 +35,11 @@ class HandlerTest extends TestCase
     {
         $request = (new ServerRequest)->withHeader('Accept', 'text/xml');
 
+        $whoops = Phony::partialMock(Whoops::class)->get();
+        Phony::onStatic($whoops)->isCli->returns(false);
+
         $response = Dispatcher::run([
-            new Whoops(),
+            $whoops,
             function () {
                 throw new \Exception('Error Processing Request');
             },
@@ -62,8 +54,11 @@ class HandlerTest extends TestCase
     {
         $request = (new ServerRequest)->withHeader('Accept', 'text/plain');
 
+        $whoops = Phony::partialMock(Whoops::class)->get();
+        Phony::onStatic($whoops)->isCli->returns(false);
+
         $response = Dispatcher::run([
-            new Whoops(),
+            $whoops,
             function () {
                 throw new \Exception('Error Processing Request');
             },
@@ -78,8 +73,11 @@ class HandlerTest extends TestCase
     {
         $request = (new ServerRequest)->withHeader('Accept', 'text/html');
 
+        $whoops = Phony::partialMock(Whoops::class)->get();
+        Phony::onStatic($whoops)->isCli->returns(false);
+
         $response = Dispatcher::run([
-            new Whoops(),
+            $whoops,
             function () {
                 throw new \Exception('Error Processing Request');
             },
@@ -94,8 +92,11 @@ class HandlerTest extends TestCase
     {
         $request = (new ServerRequest)->withHeader('Accept', 'text/html');
 
+        $whoops = Phony::partialMock(Whoops::class)->get();
+        Phony::onStatic($whoops)->isCli->returns(false);
+
         $response = Dispatcher::run([
-            (new Whoops)->defaultHandler(new XmlResponseHandler),
+            $whoops->defaultHandler(new XmlResponseHandler),
             function () {
                 throw new \Exception('Error Processing Request');
             },

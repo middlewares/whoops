@@ -158,6 +158,11 @@ class Whoops implements MiddlewareInterface
         return $whoops;
     }
 
+    protected static function isCli(): bool
+    {
+        return php_sapi_name() === 'cli';
+    }
+
     /**
      * Returns the preferred format used by whoops.
      *
@@ -165,7 +170,7 @@ class Whoops implements MiddlewareInterface
      */
     private static function getPreferredFormat(ServerRequestInterface $request)
     {
-        if (php_sapi_name() === 'cli') {
+        if (static::isCli()) {
             return 'plain';
         }
 
