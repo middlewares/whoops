@@ -14,7 +14,7 @@ class HandlerTest extends TestCase
 {
     public function testJson()
     {
-        $request = (new ServerRequest)->withHeader('Accept', 'application/json');
+        $request = (new ServerRequest())->withHeader('Accept', 'application/json');
 
         $whoops = Phony::partialMock(Whoops::class)->get();
         Phony::onStatic($whoops)->isCli->returns(false);
@@ -30,10 +30,9 @@ class HandlerTest extends TestCase
         $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
     }
 
-
     public function testXml()
     {
-        $request = (new ServerRequest)->withHeader('Accept', 'text/xml');
+        $request = (new ServerRequest())->withHeader('Accept', 'text/xml');
 
         $whoops = Phony::partialMock(Whoops::class)->get();
         Phony::onStatic($whoops)->isCli->returns(false);
@@ -49,10 +48,9 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/xml', $response->getHeaderLine('Content-Type'));
     }
 
-
     public function testPlain()
     {
-        $request = (new ServerRequest)->withHeader('Accept', 'text/plain');
+        $request = (new ServerRequest())->withHeader('Accept', 'text/plain');
 
         $whoops = Phony::partialMock(Whoops::class)->get();
         Phony::onStatic($whoops)->isCli->returns(false);
@@ -68,10 +66,9 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
     }
 
-
     public function testDefault()
     {
-        $request = (new ServerRequest)->withHeader('Accept', 'text/html');
+        $request = (new ServerRequest())->withHeader('Accept', 'text/html');
 
         $whoops = Phony::partialMock(Whoops::class)->get();
         Phony::onStatic($whoops)->isCli->returns(false);
@@ -87,16 +84,15 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
     }
 
-
     public function testCustom()
     {
-        $request = (new ServerRequest)->withHeader('Accept', 'text/html');
+        $request = (new ServerRequest())->withHeader('Accept', 'text/html');
 
         $whoops = Phony::partialMock(Whoops::class)->get();
         Phony::onStatic($whoops)->isCli->returns(false);
 
         $response = Dispatcher::run([
-            $whoops->defaultHandler(new XmlResponseHandler),
+            $whoops->defaultHandler(new XmlResponseHandler()),
             function () {
                 throw new \Exception('Error Processing Request');
             },
