@@ -25,6 +25,8 @@ class WhoopsTest extends TestCase
 
     public function testStandardError()
     {
+        error_reporting(E_ALL);
+
         $response = Dispatcher::run([
             new Whoops(),
             function () {
