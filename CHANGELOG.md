@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] - 2018-05-23
+
+### Added
+
+- New option `handlerContainer` to use a PSR-11 container to customize the `Whoops\Handler\HandlerInterface` used to display the errors. [#5]
+
 ## [1.0.0] - 2018-01-26
 
 ### Added
@@ -69,6 +75,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 First version
 
+[#5]: https://github.com/middlewares/whoops/issues/5
+
+[1.1.0]: https://github.com/middlewares/whoops/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/middlewares/whoops/compare/v0.6.0...v1.0.0
 [0.6.0]: https://github.com/middlewares/whoops/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/middlewares/whoops/compare/v0.4.1...v0.5.0
