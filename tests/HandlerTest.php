@@ -4,11 +4,11 @@ declare(strict_types = 1);
 namespace Middlewares\Tests;
 
 use Eloquent\Phony\Phpunit\Phony;
+use Middlewares\Utils\Factory;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Whoops;
 use Middlewares\WhoopsHandlerContainer;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\ServerRequest;
 
 class HandlerTest extends TestCase
 {
@@ -22,7 +22,7 @@ class HandlerTest extends TestCase
 
     public function testJson()
     {
-        $request = (new ServerRequest())->withHeader('Accept', 'application/json');
+        $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'application/json');
 
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
@@ -37,7 +37,7 @@ class HandlerTest extends TestCase
 
     public function testXml()
     {
-        $request = (new ServerRequest())->withHeader('Accept', 'text/xml');
+        $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'text/xml');
 
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
@@ -52,7 +52,7 @@ class HandlerTest extends TestCase
 
     public function testPlain()
     {
-        $request = (new ServerRequest())->withHeader('Accept', 'text/plain');
+        $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'text/plain');
 
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
@@ -67,7 +67,7 @@ class HandlerTest extends TestCase
 
     public function testHtml()
     {
-        $request = (new ServerRequest())->withHeader('Accept', 'text/html');
+        $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'text/html');
 
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
@@ -82,7 +82,7 @@ class HandlerTest extends TestCase
 
     public function testDefault()
     {
-        $request = (new ServerRequest())->withHeader('Accept', 'foo/bar');
+        $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'foo/bar');
 
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
@@ -97,14 +97,12 @@ class HandlerTest extends TestCase
 
     public function testEmptyAccept()
     {
-        $request = new ServerRequest();
-
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
             function () {
                 throw new \Exception('Error Processing Request');
             },
-        ], $request);
+        ]);
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
