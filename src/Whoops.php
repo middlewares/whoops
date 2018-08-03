@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
+use Middlewares\Utils\Traits\HasResponseFactory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -17,6 +18,8 @@ use Whoops\Util\SystemFacade;
 
 class Whoops implements MiddlewareInterface
 {
+    use HasResponseFactory;
+
     /**
      * @var Run|null
      */
@@ -104,7 +107,7 @@ class Whoops implements MiddlewareInterface
         try {
             $response = $handler->handle($request);
         } catch (\Throwable $exception) {
-            $response = Utils\Factory::createResponse(500);
+            $response = $this->createResponse(500);
             $response->getBody()->write($whoops->$method($exception));
             $response = self::updateResponseContentType($response, $whoops);
         } finally {
