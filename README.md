@@ -47,6 +47,9 @@ To catch not only throwable exceptions, but also php errors. This makes whoops t
 
 To define a custom PSR-11 container used to create the intance of `Whoops\Handler\HandlerInterface` based in the `Accept` header in the request.
 
+#### `responseFactory(Psr\Http\Message\ResponseFactoryInterface $responseFactory)`
+
+A PSR-17 factory to create the error response.
 ---
 
 Please see [CHANGELOG](CHANGELOG.md) for more information about recent changes and [CONTRIBUTING](CONTRIBUTING.md) for contributing details.
