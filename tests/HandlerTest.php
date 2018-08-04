@@ -4,8 +4,8 @@ declare(strict_types = 1);
 namespace Middlewares\Tests;
 
 use Eloquent\Phony\Phpunit\Phony;
-use Middlewares\Utils\Factory;
 use Middlewares\Utils\Dispatcher;
+use Middlewares\Utils\Factory;
 use Middlewares\Whoops;
 use Middlewares\WhoopsHandlerContainer;
 use PHPUnit\Framework\TestCase;
