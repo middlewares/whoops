@@ -54,7 +54,7 @@ class Whoops implements MiddlewareInterface
      */
     public function catchErrors(bool $catchErrors = true): self
     {
-        $this->catchErrors = (bool) $catchErrors;
+        $this->catchErrors = $catchErrors;
 
         return $this;
     }
