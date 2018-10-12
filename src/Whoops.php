@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace Middlewares;
 
 use Middlewares\Utils\Traits\HasResponseFactory;
+use Middlewares\Utils\Factory;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,10 +45,14 @@ class Whoops implements MiddlewareInterface
     /**
      * Set the whoops instance.
      */
-    public function __construct(Run $whoops = null, SystemFacade $system = null)
-    {
+    public function __construct(
+        Run $whoops = null,
+        SystemFacade $system = null,
+        ResponseFactoryInterface $responseFactory = null
+    ) {
         $this->whoops = $whoops;
         $this->system = $system;
+        $this->responseFactory = $responseFactory ?: Factory::getResponseFactory();
     }
 
     /**
