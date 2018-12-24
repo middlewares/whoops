@@ -25,22 +25,22 @@ class Whoops implements MiddlewareInterface
     /**
      * @var Run|null
      */
-    private $whoops;
+    protected $whoops;
 
     /**
      * @var SystemFacade|null
      */
-    private $system;
+    protected $system;
 
     /**
      * @var bool Whether catch errors or not
      */
-    private $catchErrors = true;
+    protected $catchErrors = true;
 
     /**
      * @var ContainerInterface|null
      */
-    private $handlerContainer;
+    protected $handlerContainer;
 
     /**
      * Set the whoops instance.
@@ -132,7 +132,7 @@ class Whoops implements MiddlewareInterface
     /**
      * Returns the whoops instance or create one.
      */
-    private function getWhoopsInstance(ServerRequestInterface $request): Run
+    protected function getWhoopsInstance(ServerRequestInterface $request): Run
     {
         if (!$this->system) {
             $this->system = new SystemFacade();
@@ -149,7 +149,7 @@ class Whoops implements MiddlewareInterface
     /**
      * Returns the content-type for the whoops instance
      */
-    private static function updateResponseContentType(ResponseInterface $response, Run $whoops): ResponseInterface
+    protected static function updateResponseContentType(ResponseInterface $response, Run $whoops): ResponseInterface
     {
         if (1 !== count($whoops->getHandlers())) {
             return $response;
