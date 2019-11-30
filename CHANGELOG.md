@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Allow to define a `responseFactory` in the second argument of the constructor
 
+### Changed
+- `getWhoopsInstance` is now protected, to allow override [#7]
+
 ### Removed
 - Support for PHP 7.0 and 7.1
 - The second argument of the constructor to pass a instance of `SystemFacade`.
@@ -69,6 +72,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 First version
 
 [#5]: https://github.com/middlewares/whoops/issues/5
+[#7]: https://github.com/middlewares/whoops/issues/7
 
 [2.0.0]: https://github.com/middlewares/whoops/compare/v1.2.0...v2.0.0
 [1.2.0]: https://github.com/middlewares/whoops/compare/v1.1.0...v1.2.0

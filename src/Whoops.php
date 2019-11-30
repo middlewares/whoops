@@ -31,7 +31,7 @@ class Whoops implements MiddlewareInterface
     /**
      * @var ContainerInterface|null
      */
-    private $handlerContainer;
+    protected $handlerContainer;
 
     /**
      * @var ResponseFactoryInterface
@@ -122,7 +122,7 @@ class Whoops implements MiddlewareInterface
     /**
      * Returns the whoops instance or create one.
      */
-    private function getWhoopsInstance(ServerRequestInterface $request): Run
+    protected function getWhoopsInstance(ServerRequestInterface $request): Run
     {
         $whoops = new Run();
         $container = $this->handlerContainer ?: new WhoopsHandlerContainer();
