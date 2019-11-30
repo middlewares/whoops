@@ -26,7 +26,7 @@ composer require middlewares/whoops
 
 ```php
 $dispatcher = new Dispatcher([
-	new Middlewares\Whoops()
+    new Middlewares\Whoops()
 ]);
 
 $response = $dispatcher->dispatch(new ServerRequest());
