@@ -127,7 +127,7 @@ class Whoops implements MiddlewareInterface
         $whoops = new Run();
         $container = $this->handlerContainer ?: new WhoopsHandlerContainer();
         $handler = $container->get($request->getHeaderLine('Accept'));
-        $whoops->pushHandler($handler);
+        $whoops->appendHandler($handler);
 
         return $whoops;
     }
