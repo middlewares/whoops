@@ -3,10 +3,9 @@ declare(strict_types = 1);
 
 namespace Middlewares;
 
-use Middlewares\Utils\Traits\HasResponseFactory;
 use Middlewares\Utils\Factory;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -16,21 +15,13 @@ use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
-use Whoops\Util\SystemFacade;
 
 class Whoops implements MiddlewareInterface
 {
-    use HasResponseFactory;
-
     /**
      * @var Run|null
      */
     private $whoops;
-
-    /**
-     * @var SystemFacade|null
-     */
-    private $system;
 
     /**
      * @var bool Whether catch errors or not
@@ -43,15 +34,18 @@ class Whoops implements MiddlewareInterface
     private $handlerContainer;
 
     /**
+     * @var ResponseFactoryInterface
+     */
+    private $responseFactory;
+
+    /**
      * Set the whoops instance.
      */
     public function __construct(
         Run $whoops = null,
-        SystemFacade $system = null,
         ResponseFactoryInterface $responseFactory = null
     ) {
         $this->whoops = $whoops;
-        $this->system = $system;
         $this->responseFactory = $responseFactory ?: Factory::getResponseFactory();
     }
 
@@ -103,17 +97,13 @@ class Whoops implements MiddlewareInterface
                 $whoops->$method();
             };
 
-            if ($this->system) {
-                $this->system->registerShutdownFunction($shutdown);
-            } else {
-                register_shutdown_function($shutdown);
-            }
+            register_shutdown_function($shutdown);
         }
 
         try {
             $response = $handler->handle($request);
         } catch (\Throwable $exception) {
-            $response = $this->createResponse(500);
+            $response = $this->responseFactory->createResponse(500);
             $response->getBody()->write($whoops->$method($exception));
             $response = self::updateResponseContentType($response, $whoops);
         } finally {
@@ -134,11 +124,7 @@ class Whoops implements MiddlewareInterface
      */
     private function getWhoopsInstance(ServerRequestInterface $request): Run
     {
-        if (!$this->system) {
-            $this->system = new SystemFacade();
-        }
-
-        $whoops = new Run($this->system);
+        $whoops = new Run();
         $container = $this->handlerContainer ?: new WhoopsHandlerContainer();
         $handler = $container->get($request->getHeaderLine('Accept'));
         $whoops->pushHandler($handler);
