@@ -36,7 +36,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
-        $this->assertMatchesRegularExpression('/Undefined variable[:]? [$]?b/', (string) $response->getBody());
+        $this->assertNotFalse(strpos((string) $response->getBody(), 'Undefined variable'));
     }
 
     public function testNotError()
