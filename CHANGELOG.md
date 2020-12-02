@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.1] - 2020-12-02
+### Added
+- Support for PHP 8
+
 ## [2.0.0] - 2019-11-30
 ### Added
 - Allow to define a `responseFactory` in the second argument of the constructor
@@ -74,6 +78,7 @@ First version
 [#5]: https://github.com/middlewares/whoops/issues/5
 [#7]: https://github.com/middlewares/whoops/issues/7
 
+[2.0.1]: https://github.com/middlewares/whoops/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/middlewares/whoops/compare/v1.2.0...v2.0.0
 [1.2.0]: https://github.com/middlewares/whoops/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/middlewares/whoops/compare/v1.0.0...v1.1.0
