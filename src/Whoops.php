@@ -42,8 +42,8 @@ class Whoops implements MiddlewareInterface
      * Set the whoops instance.
      */
     public function __construct(
-        Run $whoops = null,
-        ResponseFactoryInterface $responseFactory = null
+        ?Run $whoops = null,
+        ?ResponseFactoryInterface $responseFactory = null
     ) {
         $this->whoops = $whoops;
         $this->responseFactory = $responseFactory ?: Factory::getResponseFactory();
