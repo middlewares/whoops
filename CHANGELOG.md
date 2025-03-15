@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.0.3] - 2024-03-21
+### Added / Fixed
+- Support for PHP 8.3 and PHP 8.4 (removed deprecation notices)
+
+## [2.0.3] - 2024-03-21
 ### Fixed
 - Allow middlewares/utils 4.0
 
@@ -86,6 +90,7 @@ First version
 [#7]: https://github.com/middlewares/whoops/issues/7
 [#11]: https://github.com/middlewares/whoops/issues/11
 
+[2.0.3]: https://github.com/middlewares/whoops/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/middlewares/whoops/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/middlewares/whoops/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/middlewares/whoops/compare/v2.0.0...v2.0.1

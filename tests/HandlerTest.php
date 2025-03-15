@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Middlewares\Tests;
 
-use Eloquent\Phony\Phpunit\Phony;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use Middlewares\Whoops;
@@ -12,15 +11,17 @@ use PHPUnit\Framework\TestCase;
 
 class HandlerTest extends TestCase
 {
-    private static function getContainer()
+    private static function getContainer(): WhoopsHandlerContainer
     {
-        $container = Phony::partialMock(WhoopsHandlerContainer::class)->get();
-        Phony::onStatic($container)->isCli->returns(false);
-
-        return $container;
+        return new class() extends WhoopsHandlerContainer {
+            protected static function isCli(): bool
+            {
+                return false;
+            }
+        };
     }
 
-    public function testJson()
+    public function testJson(): void
     {
         $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'application/json');
 
@@ -35,7 +36,7 @@ class HandlerTest extends TestCase
         $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
     }
 
-    public function testXml()
+    public function testXml(): void
     {
         $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'text/xml');
 
@@ -50,7 +51,7 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/xml', $response->getHeaderLine('Content-Type'));
     }
 
-    public function testPlain()
+    public function testPlain(): void
     {
         $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'text/plain');
 
@@ -65,7 +66,7 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
     }
 
-    public function testHtml()
+    public function testHtml(): void
     {
         $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'text/html');
 
@@ -80,7 +81,7 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
     }
 
-    public function testDefault()
+    public function testDefault(): void
     {
         $request = Factory::createServerRequest('GET', '/')->withHeader('Accept', 'foo/bar');
 
@@ -95,7 +96,7 @@ class HandlerTest extends TestCase
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
     }
 
-    public function testEmptyAccept()
+    public function testEmptyAccept(): void
     {
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
