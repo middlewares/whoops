@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class WhoopsTest extends TestCase
 {
-    public function testError()
+    public function testError(): void
     {
         $response = Dispatcher::run([
             new Whoops(),
@@ -23,13 +23,14 @@ class WhoopsTest extends TestCase
         $this->assertNotFalse(strpos((string) $response->getBody(), 'Error Processing Request'));
     }
 
-    public function testStandardError()
+    public function testStandardError(): void
     {
         error_reporting(E_ALL);
 
         $response = Dispatcher::run([
             new Whoops(),
             function () {
+                /** @phpstan-ignore variable.undefined */
                 $a = $b; //undefined variable
             },
         ]);
@@ -39,7 +40,7 @@ class WhoopsTest extends TestCase
         $this->assertNotFalse(strpos((string) $response->getBody(), 'Undefined variable'));
     }
 
-    public function testNotError()
+    public function testNotError(): void
     {
         $response = Dispatcher::run([
             new Whoops(),
