@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for PHP 8.3 and PHP 8.4 (removed deprecation notices)
 
 ### Changed
-- (dev) Upgraded composer dev dependencies (laminas/laminas-diactoros, phpstan/phpstan).
+- (dev) Upgraded composer dev dependencies (laminas-diactoros, phpstan and php_codesniffer related).
 
 ### Removed
 - (dev) Removed deprecated eloquent/phony-phpunit package along with its unit tests usage.
