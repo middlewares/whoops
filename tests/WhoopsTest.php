@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Middlewares\Tests;
 
+use Exception;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Whoops;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +15,7 @@ class WhoopsTest extends TestCase
         $response = Dispatcher::run([
             new Whoops(),
             function () {
-                throw new \Exception('Error Processing Request');
+                throw new Exception('Error Processing Request');
             },
         ]);
 

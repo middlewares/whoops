@@ -10,6 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
@@ -102,7 +103,7 @@ class Whoops implements MiddlewareInterface
 
         try {
             $response = $handler->handle($request);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $response = $this->responseFactory->createResponse(500);
             $response->getBody()->write($whoops->$method($exception));
             $response = self::updateResponseContentType($response, $whoops);

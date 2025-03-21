@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Middlewares\Tests;
 
+use Exception;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\Factory;
 use Middlewares\Whoops;
@@ -28,7 +29,7 @@ class HandlerTest extends TestCase
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
             function () {
-                throw new \Exception('Error Processing Request');
+                throw new Exception('Error Processing Request');
             },
         ], $request);
 
@@ -43,7 +44,7 @@ class HandlerTest extends TestCase
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
             function () {
-                throw new \Exception('Error Processing Request');
+                throw new Exception('Error Processing Request');
             },
         ], $request);
 
@@ -58,7 +59,7 @@ class HandlerTest extends TestCase
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
             function () {
-                throw new \Exception('Error Processing Request');
+                throw new Exception('Error Processing Request');
             },
         ], $request);
 
@@ -73,7 +74,7 @@ class HandlerTest extends TestCase
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
             function () {
-                throw new \Exception('Error Processing Request');
+                throw new Exception('Error Processing Request');
             },
         ], $request);
 
@@ -88,7 +89,7 @@ class HandlerTest extends TestCase
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
             function () {
-                throw new \Exception('Error Processing Request');
+                throw new Exception('Error Processing Request');
             },
         ], $request);
 
@@ -101,7 +102,7 @@ class HandlerTest extends TestCase
         $response = Dispatcher::run([
             (new Whoops())->handlerContainer(self::getContainer()),
             function () {
-                throw new \Exception('Error Processing Request');
+                throw new Exception('Error Processing Request');
             },
         ]);
 
