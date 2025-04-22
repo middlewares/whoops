@@ -13,6 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Run;
+use Whoops\RunInterface;
 
 class Whoops implements MiddlewareInterface
 {
@@ -75,7 +76,7 @@ class Whoops implements MiddlewareInterface
         ob_start();
         $level = ob_get_level();
 
-        $method = Run::EXCEPTION_HANDLER;
+        $method = RunInterface::EXCEPTION_HANDLER;
         $whoops = $this->whoops ?: $this->createWhoopsInstance($request);
 
         $whoops->allowQuit(false);
@@ -91,7 +92,7 @@ class Whoops implements MiddlewareInterface
                 $whoops->writeToOutput(true);
                 $whoops->sendHttpCode(true);
 
-                $method = Run::SHUTDOWN_HANDLER;
+                $method = RunInterface::SHUTDOWN_HANDLER;
                 $whoops->$method();
             };
 

@@ -47,6 +47,33 @@ class WhoopsTest extends TestCase
         $this->assertNotFalse(strpos((string) $response->getBody(), 'Undefined variable'));
     }
 
+    public function testPlainHandlerWithLoggerOnlyDisableChangesResponseBody(): void
+    {
+        $whoops = new Run();
+        $whoops->writeToOutput(false);
+        $whoops->allowQuit(false);
+        $whoops->sendHttpCode(false);
+
+        $text = new PlainTextHandler(new NullLogger());
+        $text->addTraceToOutput(true);
+        $text->loggerOnly(false);
+
+        $whoops->pushHandler($text);
+        $whoops->register();
+
+        $response = Dispatcher::run([
+            (new Whoops($whoops)),
+            function () {
+                throw new Exception('Error Processing Request');
+            },
+        ]);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('Stack trace:', (string)$response->getBody());
+        $this->assertStringContainsString('Exception: Error Processing Request in file', (string)$response->getBody());
+    }
+
     public function testPlainHandlerWithLoggerOnlyLeavesResponseUntouched(): void
     {
         $whoops = new Run();
@@ -70,7 +97,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('', $response->getHeaderLine('Content-Type'));
-        $this->assertEquals('', $response->getBody()->getContents());
+        $this->assertEquals('', (string)$response->getBody());
     }
 
     public function testPlainHandlerWithLoggerOnlyAndPrettyResponseFactoryShowsPrettyResponse(): void
@@ -103,7 +130,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
-        $this->assertEquals('<strong>Sorry! Come back later</strong>', $response->getBody()->getContents());
+        $this->assertEquals('<strong>Sorry! Come back later</strong>', (string)$response->getBody());
     }
 
     public function testWithoutError(): void
