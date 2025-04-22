@@ -73,7 +73,7 @@ class WhoopsTest extends TestCase
         $this->assertEquals('', $response->getBody()->getContents());
     }
 
-    public function testPlainHandlerWithLoggerOnlyAndPrettyResponseFactory(): void
+    public function testPlainHandlerWithLoggerOnlyAndPrettyResponseFactoryShowsPrettyResponse(): void
     {
         $whoops = new Run();
         $whoops->writeToOutput(false);
@@ -103,6 +103,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
+        $this->assertEquals('<strong>Sorry! Come back later</strong>', $response->getBody()->getContents());
     }
 
     public function testWithoutError(): void
