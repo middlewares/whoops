@@ -146,7 +146,7 @@ class Whoops implements MiddlewareInterface
     }
 
     /**
-     * Updates Response's content type in order to match Handler's content type.
+     * Updates Response's content type to match Handler's content type.
      */
     private static function updateResponseContentType(ResponseInterface $response, Run $whoops): ResponseInterface
     {
