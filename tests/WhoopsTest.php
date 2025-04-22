@@ -87,7 +87,7 @@ class WhoopsTest extends TestCase
         $whoops->pushHandler($text);
         $whoops->register();
 
-        $prettyResponse = new class implements ResponseFactoryInterface {
+        $prettyResponse = new class() implements ResponseFactoryInterface {
             public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
             {
                 return new HtmlResponse('<strong>Sorry! Come back later</strong>', $code);

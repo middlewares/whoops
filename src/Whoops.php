@@ -146,7 +146,7 @@ class Whoops implements MiddlewareInterface
         }
 
         if (method_exists($handler, 'contentType')) {
-            return $response->withHeader('Content-Type', $handler->contentType());;
+            return $response->withHeader('Content-Type', $handler->contentType());
         }
 
         return $response;
