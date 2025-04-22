@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.0] - 2025-04-22
+### Fixed
+- Fix for Whoop's PlainHandler `loggerOnly()` mode [#17].
+
+### Added
+- Added support for more Accept headers in WhoopsHandlerContainer (used when Whoops instance creation is delegated to the Middleware).
+
 ## [2.0.4] - 2025-03-15
 ### Fixed
 - Support for PHP 8.3 and PHP 8.4 (removed deprecation notices)
@@ -89,7 +96,9 @@ First version
 [#5]: https://github.com/middlewares/whoops/issues/5
 [#7]: https://github.com/middlewares/whoops/issues/7
 [#11]: https://github.com/middlewares/whoops/issues/11
+[#17]: https://github.com/middlewares/whoops/issues/17
 
+[2.1.0]: https://github.com/middlewares/whoops/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/middlewares/whoops/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/middlewares/whoops/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/middlewares/whoops/compare/v2.0.1...v2.0.2

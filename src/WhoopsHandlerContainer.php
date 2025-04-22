@@ -11,7 +11,7 @@ use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\XmlResponseHandler;
 
 /**
- * Resolve a callable using a container.
+ * This is used to return the right content types given Request's Accept header when a Whoops instance was not provided.
  */
 class WhoopsHandlerContainer implements ContainerInterface
 {
@@ -24,13 +24,13 @@ class WhoopsHandlerContainer implements ContainerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $accept Accept header value.
      *
      * @return HandlerInterface
      */
-    public function get($id)
+    public function get($accept)
     {
-        $format = self::getPreferredFormat($id);
+        $format = self::getPreferredFormat($accept);
 
         return $this->$format();
     }
@@ -81,8 +81,8 @@ class WhoopsHandlerContainer implements ContainerInterface
         $formats = [
             'json' => ['application/json'],
             'html' => ['text/html'],
-            'xml' => ['text/xml'],
-            'plain' => ['text/plain', 'text/css', 'text/javascript'],
+            'xml' => ['text/xml', 'application/xml'],
+            'plain' => ['text/plain', 'text/css', 'text/javascript', 'application/javascript'],
         ];
 
         foreach ($formats as $format => $mimes) {

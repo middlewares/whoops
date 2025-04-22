@@ -11,11 +11,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
-use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Handler\XmlResponseHandler;
 use Whoops\Run;
+use Whoops\RunInterface;
 
 class Whoops implements MiddlewareInterface
 {
@@ -25,7 +23,7 @@ class Whoops implements MiddlewareInterface
     private $whoops;
 
     /**
-     * @var bool Whether catch errors or not
+     * @var bool Whether to catch errors or not
      */
     private $catchErrors = true;
 
@@ -78,8 +76,8 @@ class Whoops implements MiddlewareInterface
         ob_start();
         $level = ob_get_level();
 
-        $method = Run::EXCEPTION_HANDLER;
-        $whoops = $this->whoops ?: $this->getWhoopsInstance($request);
+        $method = RunInterface::EXCEPTION_HANDLER;
+        $whoops = $this->whoops ?: $this->createWhoopsInstance($request);
 
         $whoops->allowQuit(false);
         $whoops->writeToOutput(false);
@@ -94,7 +92,7 @@ class Whoops implements MiddlewareInterface
                 $whoops->writeToOutput(true);
                 $whoops->sendHttpCode(true);
 
-                $method = Run::SHUTDOWN_HANDLER;
+                $method = RunInterface::SHUTDOWN_HANDLER;
                 $whoops->$method();
             };
 
@@ -105,8 +103,11 @@ class Whoops implements MiddlewareInterface
             $response = $handler->handle($request);
         } catch (Throwable $exception) {
             $response = $this->responseFactory->createResponse(500);
-            $response->getBody()->write($whoops->$method($exception));
-            $response = self::updateResponseContentType($response, $whoops);
+
+            if (self::shouldUpdateResponse($whoops)) {
+                $response->getBody()->write($whoops->$method($exception));
+                $response = self::updateResponseContentType($response, $whoops);
+            }
         } finally {
             while (ob_get_level() >= $level) {
                 ob_end_clean();
@@ -121,9 +122,9 @@ class Whoops implements MiddlewareInterface
     }
 
     /**
-     * Returns the whoops instance or create one.
+     * Creates a Whoops instance in case one was not provided.
      */
-    protected function getWhoopsInstance(ServerRequestInterface $request): Run
+    protected function createWhoopsInstance(ServerRequestInterface $request): Run
     {
         $whoops = new Run();
         $container = $this->handlerContainer ?: new WhoopsHandlerContainer();
@@ -133,8 +134,19 @@ class Whoops implements MiddlewareInterface
         return $whoops;
     }
 
+    private static function shouldUpdateResponse(Run $whoops): bool
+    {
+        if (1 !== count($whoops->getHandlers())) {
+            return false;
+        }
+
+        $handler = current($whoops->getHandlers());
+
+        return !($handler instanceof PlainTextHandler && $handler->loggerOnly());
+    }
+
     /**
-     * Returns the content-type for the whoops instance
+     * Updates Response's content type to match Handler's content type.
      */
     private static function updateResponseContentType(ResponseInterface $response, Run $whoops): ResponseInterface
     {
@@ -144,20 +156,8 @@ class Whoops implements MiddlewareInterface
 
         $handler = current($whoops->getHandlers());
 
-        if ($handler instanceof PrettyPageHandler) {
-            return $response->withHeader('Content-Type', 'text/html');
-        }
-
-        if ($handler instanceof JsonResponseHandler) {
-            return $response->withHeader('Content-Type', 'application/json');
-        }
-
-        if ($handler instanceof XmlResponseHandler) {
-            return $response->withHeader('Content-Type', 'text/xml');
-        }
-
-        if ($handler instanceof PlainTextHandler) {
-            return $response->withHeader('Content-Type', 'text/plain');
+        if (method_exists($handler, 'contentType')) {
+            return $response->withHeader('Content-Type', $handler->contentType());
         }
 
         return $response;
