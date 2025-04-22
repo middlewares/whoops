@@ -104,7 +104,7 @@ class Whoops implements MiddlewareInterface
         } catch (Throwable $exception) {
             $response = $this->responseFactory->createResponse(500);
 
-            if (self::shouldMutateResponse($whoops)) {
+            if (self::shouldUpdateResponse($whoops)) {
                 $response->getBody()->write($whoops->$method($exception));
                 $response = self::updateResponseContentType($response, $whoops);
             }
@@ -134,7 +134,7 @@ class Whoops implements MiddlewareInterface
         return $whoops;
     }
 
-    private static function shouldMutateResponse(Run $whoops): bool
+    private static function shouldUpdateResponse(Run $whoops): bool
     {
         if (1 !== count($whoops->getHandlers())) {
             return false;
