@@ -102,8 +102,11 @@ class Whoops implements MiddlewareInterface
             $response = $handler->handle($request);
         } catch (Throwable $exception) {
             $response = $this->responseFactory->createResponse(500);
-            $response->getBody()->write($whoops->$method($exception));
-            $response = self::updateResponseContentType($response, $whoops);
+
+            if (self::shouldMutateResponse($whoops)) {
+                $response->getBody()->write($whoops->$method($exception));
+                $response = self::updateResponseContentType($response, $whoops);
+            }
         } finally {
             while (ob_get_level() >= $level) {
                 ob_end_clean();
@@ -130,6 +133,17 @@ class Whoops implements MiddlewareInterface
         return $whoops;
     }
 
+    private static function shouldMutateResponse(Run $whoops): bool
+    {
+        if (1 !== count($whoops->getHandlers())) {
+            return false;
+        }
+
+        $handler = current($whoops->getHandlers());
+
+        return !($handler instanceof PlainTextHandler && $handler->loggerOnly());
+    }
+
     /**
      * Updates Response's content type in order to match Handler's content type.
      */
@@ -140,10 +154,6 @@ class Whoops implements MiddlewareInterface
         }
 
         $handler = current($whoops->getHandlers());
-
-        if ($handler instanceof PlainTextHandler && $handler->loggerOnly()) {
-            return $response;
-        }
 
         if (method_exists($handler, 'contentType')) {
             return $response->withHeader('Content-Type', $handler->contentType());
