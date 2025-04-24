@@ -72,8 +72,7 @@ class WhoopsTest extends TestCase
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
         // Whoops doesn't output anything on CLI
-        $this->assertEquals('', (string)$response->getBody());
-
+        $this->assertEquals('', (string) $response->getBody());
     }
 
     public function testPlainHandlerWithLoggerOnlyDisableChangesResponseBody(): void
@@ -99,8 +98,8 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
-        $this->assertStringContainsString('Stack trace:', (string)$response->getBody());
-        $this->assertStringContainsString('Exception: Error Processing Request in file', (string)$response->getBody());
+        $this->assertStringContainsString('Stack trace:', (string) $response->getBody());
+        $this->assertStringContainsString('Exception: Error Processing Request in file', (string) $response->getBody());
     }
 
     public function testPlainHandlerWithLoggerOnlyLeavesResponseUntouched(): void
@@ -126,7 +125,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('', $response->getHeaderLine('Content-Type'));
-        $this->assertEquals('', (string)$response->getBody());
+        $this->assertEquals('', (string) $response->getBody());
     }
 
     public function testPlainHandlerWithLoggerOnlyAndPrettyResponseFactoryShowsPrettyResponse(): void
@@ -159,7 +158,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
-        $this->assertEquals('<strong>Sorry! Come back later</strong>', (string)$response->getBody());
+        $this->assertEquals('<strong>Sorry! Come back later</strong>', (string) $response->getBody());
     }
 
     public function testPlainHandlerWithLoggerOnlyAndPrettyHandlerTakesThePrettyHandler(): void
@@ -189,7 +188,7 @@ class WhoopsTest extends TestCase
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
         // for some reason PrettyPageHandler doesn't output anything in CLI
-        $this->assertEquals('', (string)$response->getBody());
+        $this->assertEquals('', (string) $response->getBody());
     }
 
     public function testWithLoggerOnlyItTakesTheFirstHandlerWithOutput(): void
@@ -226,7 +225,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
-        $this->assertStringStartsWith('Exception: Error Processing Request', (string)$response->getBody());
+        $this->assertStringStartsWith('Exception: Error Processing Request', (string) $response->getBody());
     }
 
     public function testItTakesTheFirstHandlerWithOutputWhenBothHaveOutput(): void
@@ -257,7 +256,7 @@ class WhoopsTest extends TestCase
         // the content type of pretty page handler is used
         $this->assertEquals('text/html', $response->getHeaderLine('Content-Type'));
         // the output of the plain text handler is used
-        $this->assertStringStartsWith('Exception: Error Processing Request', (string)$response->getBody());
+        $this->assertStringStartsWith('Exception: Error Processing Request', (string) $response->getBody());
 
         // ... its interesting how Whoops works internally
     }
