@@ -223,7 +223,7 @@ class WhoopsTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
-        $this->assertStringStartsWith('{"error":{"type":"Exception","message":"Error Processing Request","code":', (string)$response->getBody());
+        $this->assertStringStartsWith('{"error":{"type":"Exception","message":"Error Processing Request","code":', (string) $response->getBody());
     }
 
     public function testItTakesTheFirstHandlerWithOutputWhenBothHaveOutput(): void
