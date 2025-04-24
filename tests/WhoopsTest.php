@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\NullLogger;
+use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -161,15 +162,15 @@ class WhoopsTest extends TestCase
         $this->assertEquals('<strong>Sorry! Come back later</strong>', (string) $response->getBody());
     }
 
-    public function testPlainHandlerWithLoggerOnlyAndPrettyHandlerTakesThePrettyHandler(): void
+    public function testWithLoggerOnlyAndPrettyHandlerTakesThePrettyHandler(): void
     {
         $whoops = new Run();
         $whoops->writeToOutput(false);
         $whoops->allowQuit(false);
         $whoops->sendHttpCode(false);
 
+        // logger only
         $text = new PlainTextHandler(new NullLogger());
-        $text->addTraceToOutput(true);
         $text->loggerOnly(true);
         $whoops->pushHandler($text);
 
@@ -198,16 +199,13 @@ class WhoopsTest extends TestCase
         $whoops->allowQuit(false);
         $whoops->sendHttpCode(false);
 
-        $text = new PlainTextHandler(new NullLogger());
-        $text->addTraceToOutput(true);
         // without output, ignored
+        $text = new PlainTextHandler(new NullLogger());
         $text->loggerOnly(true);
         $whoops->pushHandler($text);
 
-        $text = new PlainTextHandler(new NullLogger());
-        $text->addTraceToOutput(true);
         // with output, taken first
-        $text->loggerOnly(false);
+        $text = new JsonResponseHandler();
         $whoops->pushHandler($text);
 
         // ignored
@@ -224,8 +222,8 @@ class WhoopsTest extends TestCase
         ]);
 
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals('text/plain', $response->getHeaderLine('Content-Type'));
-        $this->assertStringStartsWith('Exception: Error Processing Request', (string) $response->getBody());
+        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
+        $this->assertStringStartsWith('{"error":{"type":"Exception","message":"Error Processing Request","code":', (string)$response->getBody());
     }
 
     public function testItTakesTheFirstHandlerWithOutputWhenBothHaveOutput(): void
@@ -235,11 +233,12 @@ class WhoopsTest extends TestCase
         $whoops->allowQuit(false);
         $whoops->sendHttpCode(false);
 
+        // first handler with output
         $prettyPage = new PrettyPageHandler();
         $whoops->pushHandler($prettyPage);
 
+        // never reaches this one
         $text = new PlainTextHandler(new NullLogger());
-        $text->addTraceToOutput(true);
         $text->loggerOnly(false);
         $whoops->pushHandler($text);
 
