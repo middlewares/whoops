@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.1] - 2025-04-27
+### Fixed
+- Fix for `shouldUpdateResponse returns only true with one handler` [#19]
+
 ## [2.1.0] - 2025-04-22
 ### Fixed
 - Fix for Whoop's PlainHandler `loggerOnly()` mode [#17].
@@ -97,7 +101,9 @@ First version
 [#7]: https://github.com/middlewares/whoops/issues/7
 [#11]: https://github.com/middlewares/whoops/issues/11
 [#17]: https://github.com/middlewares/whoops/issues/17
+[#19]: https://github.com/middlewares/whoops/issues/19
 
+[2.1.1]: https://github.com/middlewares/whoops/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/middlewares/whoops/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/middlewares/whoops/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/middlewares/whoops/compare/v2.0.2...v2.0.3
