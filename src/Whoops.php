@@ -136,13 +136,17 @@ class Whoops implements MiddlewareInterface
 
     private static function shouldUpdateResponse(Run $whoops): bool
     {
-        if (1 !== count($whoops->getHandlers())) {
+        $handlers = $whoops->getHandlers();
+
+        $plainTextWithLoggerOnly = array_filter($handlers, function ($handler) {
+            return $handler instanceof PlainTextHandler && $handler->loggerOnly();
+        });
+
+        if ($plainTextWithLoggerOnly && count($plainTextWithLoggerOnly) === count($handlers)) {
             return false;
         }
 
-        $handler = current($whoops->getHandlers());
-
-        return !($handler instanceof PlainTextHandler && $handler->loggerOnly());
+        return true;
     }
 
     /**
@@ -150,11 +154,13 @@ class Whoops implements MiddlewareInterface
      */
     private static function updateResponseContentType(ResponseInterface $response, Run $whoops): ResponseInterface
     {
-        if (1 !== count($whoops->getHandlers())) {
-            return $response;
-        }
+        $handlers = $whoops->getHandlers();
 
-        $handler = current($whoops->getHandlers());
+        $handlersWithOutput = array_filter($handlers, function ($handler) {
+            return !($handler instanceof PlainTextHandler && $handler->loggerOnly());
+        });
+
+        $handler = current($handlersWithOutput);
 
         if (method_exists($handler, 'contentType')) {
             return $response->withHeader('Content-Type', $handler->contentType());
